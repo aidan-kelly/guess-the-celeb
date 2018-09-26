@@ -25,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
     int celebNumber;
     String websiteHTML;
     ArrayList<Celeb> celebList;
-
     ImageView imageView;
     DownloadImage downloadImage;
 
@@ -49,17 +48,29 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... urls) {
+
+            //set up the result string
             String result = "";
+
             try {
+
+                //create a connection to the url
                 URL url = new URL(urls[0]);
                 HttpURLConnection httpURLConnection =(HttpURLConnection) url.openConnection();
+
+                //create an input stream from the connection
                 InputStream in = httpURLConnection.getInputStream();
                 InputStreamReader reader = new InputStreamReader(in);
-                int data = reader.read();
 
+                //reads the data as it comes in
+                int data = reader.read();
                 while(data != -1){
+
+                    //updates our result string
                     char current = (char)data;
                     result += current;
+
+                    //reads next char
                     data = reader.read();
                 }
 
@@ -79,13 +90,15 @@ public class MainActivity extends AppCompatActivity {
         protected Bitmap doInBackground(String... urls) {
 
             try{
+
+                //creates a connection to the URL provided.
                 URL url = new URL(urls[0]);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.connect();
                 InputStream in = connection.getInputStream();
 
+                //decodes the input stream into a bitmap
                 Bitmap image = BitmapFactory.decodeStream(in);
-
                 return image;
 
 
@@ -105,18 +118,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //set up
         imageView = findViewById(R.id.imageView);
-
         DownloadHTML downloadHTML = new DownloadHTML();
         downloadImage = new DownloadImage();
         websiteHTML = "";
 
+        //attempts to download the HTML
         try{
             websiteHTML = downloadHTML.execute("http://www.posh24.se/kandisar").get();
         }catch (Exception e){
             e.printStackTrace();
         }
 
+        //init the random and celebList
         rand = new Random();
         celebList = new ArrayList<Celeb>();
 
@@ -130,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
             celebList.add(toAddCeleb);
         }
 
+        //call newCeleb to fill image
         newCeleb();
 
 
@@ -137,8 +153,12 @@ public class MainActivity extends AppCompatActivity {
 
     //randomly chooses a new celeb and updates the image.
     public void newCeleb(){
+
+        //generate new number and grab that celeb
         celebNumber = rand.nextInt(81);
         Celeb celeb = celebList.get(celebNumber);
+
+        //attempts to download the celeb image
         Bitmap image;
         try{
             image = downloadImage.execute(celeb.url).get();
@@ -147,8 +167,8 @@ public class MainActivity extends AppCompatActivity {
             image = null;
         }
 
+        //sets the imageview to our celeb picture
         imageView.setImageBitmap(image);
-
 
     }
 
