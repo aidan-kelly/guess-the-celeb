@@ -1,3 +1,9 @@
+/*
+A Celeb quiz app that scrapes HTML data.
+This was programmed by Aidan Kelly, finished on September 26, 2018.
+This was created for the Android Dev Udemy Course but without guidance.
+ */
+
 package net.aidanjameskelly.guesstheceleb;
 
 import android.graphics.Bitmap;
@@ -80,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
                     //reads next char
                     data = reader.read();
                 }
-
                 return result;
 
             } catch (Exception e) {
@@ -91,13 +96,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //downloads the Image
     public class DownloadImage extends  AsyncTask<String, Void, Bitmap>{
 
         @Override
         protected Bitmap doInBackground(String... urls) {
 
             try{
-
                 //creates a connection to the URL provided.
                 URL url = new URL(urls[0]);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -116,9 +121,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,8 +186,10 @@ public class MainActivity extends AppCompatActivity {
         //sets the imageview to our celeb picture
         imageView.setImageBitmap(image);
 
+        //set up the buttons
         for(int i = 0; i < 4; i++){
 
+            //create answer options that are not the actual answer
             int randNum = -1;
             while(true){
                 if(randNum != -1 && randNum != celebNumber){
@@ -195,9 +199,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
+            //make a random celeb that is not the actual answer
             Celeb c = celebList.get(randNum);
 
 
+            //check where we need to place the actual answer
+            //place random celeb names in other 3 spots
             if(gameState[i] == 1){
                 if(i==0){
                     button1.setText(celeb.celebName);
@@ -222,13 +229,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClick(View view){
+
+        //grab the guess
         int guess = Integer.parseInt(view.getTag().toString());
 
+        //check if answer was correct
         if(gameState[guess] == 1){
             Toast.makeText(this, "Correct guess!", Toast.LENGTH_SHORT).show();
         }else{
             Toast.makeText(this, "Wrong guess!", Toast.LENGTH_SHORT).show();
         }
+
+        //ask a new celeb
         newCeleb();
     }
 
